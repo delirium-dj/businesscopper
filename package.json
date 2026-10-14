@@ -14,7 +14,7 @@
     }
   },
   "scripts": {
-    "build": "qwik build",
+    "build": "qwik build && vite build --config adapters/static/vite.config.ts",
     "build.client": "vite build",
     "build.preview": "vite build --ssr src/entry.preview.tsx",
     "build.types": "tsc --incremental --noEmit",
@@ -29,6 +29,7 @@
     "@types/node": "^20.0.0",
     "@types/three": "^0.186.0",
     "autoprefixer": "^10.4.0",
+    "ignore": "^7.0.12",
     "postcss": "^8.4.0",
     "sharp": "^0.35.5",
     "tailwindcss": "^3.4.0",
