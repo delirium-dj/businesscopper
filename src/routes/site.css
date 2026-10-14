@@ -1,0 +1,188 @@
+/*
+  File: src/routes/site.css
+  Purpose: Design tokens, Satoshi-led editorial typography, glassmorphism, marquee,
+  and reduced-motion fallbacks for the BusinessCopper storefront page.
+*/
+
+@import url('https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+:root {
+  /* Obsidian canvas, warm copper accent, restrained steel neutrals */
+  --bc-bg: #09090b;
+  --bc-bg-soft: #101013;
+  --bc-card: rgba(24, 24, 28, 0.72);
+  --bc-card-hover: rgba(32, 32, 38, 0.86);
+  --bc-border: rgba(255, 255, 255, 0.09);
+  --bc-border-hover: rgba(255, 255, 255, 0.24);
+  --bc-accent: #d97757;
+  --bc-accent-soft: rgba(217, 119, 87, 0.22);
+  --bc-text-main: #f4f4f5;
+  --bc-text-muted: #a1a1aa;
+  --bc-font-display: 'Satoshi', 'Outfit', system-ui, sans-serif;
+  --bc-font-body: 'Satoshi', 'Outfit', system-ui, sans-serif;
+  --bc-font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+.bc-page {
+  background-color: var(--bc-bg);
+  color: var(--bc-text-main);
+  font-family: var(--bc-font-body);
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.bc-font-display {
+  font-family: var(--bc-font-display);
+  letter-spacing: -0.02em;
+}
+
+.bc-font-mono {
+  font-family: var(--bc-font-mono);
+}
+
+/* Ambient canvas: deep radial blurs keep the page off flat black */
+.bc-ambient-a {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1500px;
+  height: 900px;
+  background: radial-gradient(circle at 50% 25%, rgba(217, 119, 87, 0.13) 0%, rgba(120, 90, 200, 0.08) 45%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(90px);
+}
+
+.bc-ambient-b {
+  position: absolute;
+  top: 2400px;
+  right: -260px;
+  width: 900px;
+  height: 900px;
+  background: radial-gradient(circle, rgba(217, 119, 87, 0.07) 0%, rgba(99, 102, 241, 0.06) 45%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(110px);
+}
+
+/* Fine film grain so large dark fields never look plasticky */
+.bc-grain {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Glass panels with hover physics */
+.bc-glass {
+  background: var(--bc-card);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  border: 1px solid var(--bc-border);
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), background 0.5s ease,
+    border-color 0.5s ease, box-shadow 0.5s ease;
+}
+
+.bc-glass:hover {
+  background: var(--bc-card-hover);
+  border-color: var(--bc-border-hover);
+  transform: translateY(-4px);
+  box-shadow: 0 24px 48px -20px rgba(0, 0, 0, 0.7), 0 0 32px -8px var(--bc-accent-soft);
+}
+
+/* Floating glass pill navigation */
+.bc-nav-pill {
+  background: rgba(12, 12, 16, 0.84);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* White CTAs with a whisper of copper on hover (locked in place, no lift) */
+.bc-btn-primary {
+  background: #ffffff;
+  color: #09090b;
+  font-weight: 600;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 22px rgba(255, 255, 255, 0.16);
+}
+
+.bc-btn-primary:hover {
+  background: linear-gradient(135deg, #ffffff 0%, #fdf6f1 70%, #f9e4d6 100%);
+  box-shadow: 0 4px 20px rgba(217, 119, 87, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.bc-btn-secondary {
+  background: rgba(255, 255, 255, 0.04);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(12px);
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.bc-btn-secondary:hover {
+  background: rgba(217, 119, 87, 0.04);
+  border-color: rgba(217, 119, 87, 0.35);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 4px 16px rgba(217, 119, 87, 0.06);
+}
+
+/* Infinite marquee (pauses on hover) */
+@keyframes bcMarquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.bc-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: bcMarquee 42s linear infinite;
+}
+
+.bc-marquee:hover .bc-marquee-track {
+  animation-play-state: paused;
+}
+
+/* Scrub-reveal words: GSAP drives opacity 0.12 -> 1 on scroll */
+.bc-word {
+  will-change: opacity;
+}
+
+::selection {
+  background: var(--bc-accent);
+  color: #09090b;
+}
+
+/* Strict reduced-motion collapse to static end-states */
+@media (prefers-reduced-motion: reduce) {
+  .bc-marquee-track {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .bc-glass,
+  .bc-btn-primary,
+  .bc-btn-secondary {
+    transition: none !important;
+    transform: none !important;
+  }
+
+  .bc-glass:hover {
+    transform: none !important;
+  }
+
+  .bc-word {
+    opacity: 1 !important;
+  }
+}

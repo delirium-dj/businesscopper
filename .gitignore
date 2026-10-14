@@ -1,0 +1,55 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.*
+
+# Build outputs
+dist/
+build/
+server/
+tmp/
+*.tsbuildinfo
+
+# Vite / Qwik caches
+.cache/
+node_modules/.cache/
+node_modules/.vite/
+vite.config.*.timestamp-*
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Editors / IDEs
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.swp
+*~
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+
+# TypeScript incremental build info (also matched above, kept explicit)
+tsconfig.tsbuildinfo
