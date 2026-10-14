@@ -8,7 +8,15 @@
 
 import { component$, useSignal, useVisibleTask$ } from "@builder.io/qwik";
 import { type DocumentHead } from "@builder.io/qwik-city";
-import { BUSINESS, CARE_STEPS, DIMENSIONS, PRODUCTS, PROOF, REVIEWS, SPECS } from "../data/site";
+import {
+  BUSINESS,
+  CARE_STEPS,
+  DIMENSIONS,
+  PRODUCTS,
+  PROOF,
+  REVIEWS,
+  SPECS,
+} from "../data/site";
 import type { ReviewRating } from "../data/site";
 import { CopperPan3D } from "../components/copper-pan-3d";
 import "./site.css";
@@ -846,7 +854,7 @@ export default component$(() => {
       </section>
 
       {/* Action: certified proof table */}
-      <section id="proof" class="mx-auto max-w-6xl px-6 pt-16 pb-32 md:pt-12 ">
+      <section id="proof" class="mx-auto max-w-6xl px-6 pt-16 pb-32 md:pt-6 ">
         <div class="max-w-2xl">
           <span class="bc-font-mono text-xs uppercase tracking-widest text-[#d97757]">
             Our promises, in writing
@@ -898,7 +906,7 @@ export default component$(() => {
       </section>
 
       {/* Action: massive high-contrast CTA */}
-      <section class="mx-auto max-w-6xl px-6 pb-32 md:pb-48">
+      <section class="mx-auto max-w-6xl px-6 pb-32">
         <div class="bc-glass relative overflow-hidden rounded-3xl p-10 text-center md:p-16">
           <div
             class="absolute top-1/2 left-1/2 h-80 w-80 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#d97757]/15 blur-3xl"
@@ -959,12 +967,12 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: "Copper Frying Pan — Handcrafted solid-copper goods",
+  title: "BusinessCopper — Handcrafted solid-copper goods",
   meta: [
     {
       name: "description",
       content:
-        "Copper Frying Pan: hand-raised solid-copper cookware, barware, and home goods. Owner reviews, shop promises, and bespoke commissions.",
+        "BusinessCopper: hand-raised solid-copper cookware, barware, and home goods. Independent reviews, certified assays, and bespoke commissions.",
     },
   ],
 };

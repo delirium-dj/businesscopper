@@ -16,12 +16,17 @@ export const RouterHead = component$(() => {
       {head.links.map((l) => (
         <link key={l.key} {...l} />
       ))}
-      {head.styles.map((s) => (
-        <style key={s.key} {...s.props} dangerouslySetInnerHTML={s.style} />
-      ))}
-      {head.scripts.map((s) => (
-        <script key={s.key} {...s.props} dangerouslySetInnerHTML={s.script} />
-      ))}
+      {head.styles.map((s) => {
+        // Spread first, then render: keeps `dangerouslySetInnerHTML` out of
+        // the JSX literal so the optimizer cannot emit it twice (esbuild
+        // rejects duplicate keys in the SSR build).
+        const props = { ...s.props, dangerouslySetInnerHTML: s.style };
+        return <style key={s.key} {...props} />;
+      })}
+      {head.scripts.map((s) => {
+        const props = { ...s.props, dangerouslySetInnerHTML: s.script };
+        return <script key={s.key} {...props} />;
+      })}
     </>
   );
 });
