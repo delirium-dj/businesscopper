@@ -17,8 +17,15 @@ and [Three.js](https://threejs.org/) for the interactive 3D hero pan.
 - **Infinite marquee** pinned to the bottom of the first screen with range
   prices and shop perks (pauses on hover, disabled under reduced motion).
 - **Owner reviews** — sticky summary card, full review rail with score
-  breakdowns, and a verdict carousel.
+  breakdowns and enlarged quotes, plus a featured-verdict carousel that
+  stacks all verdicts in one grid cell (card sizes to the tallest, no layout
+  shift) and auto-rotates to a random verdict every 7s (pauses on
+  hover/focus, hidden tab, or reduced motion).
 - **Shop promises table, big CTA, mobile hamburger nav**, GSAP scroll reveals.
+- **Buttons + anchors** — primary CTAs cross-fade via an overlay (smooth
+  hover-in/out); `#featured-review` / `#cta` panels stay locked (no hover
+  lift). Every section has a stable anchor: `#top`, `#highlights`, `#craft`,
+  `#story`, `#reviews`, `#featured-review`, `#proof`, `#cta`.
 - **Local responsive imagery** — every photo is served from `src/assets/` and
   generated at build time in AVIF + WebP (+ JPEG fallback) at multiple widths
   via `vite-imagetools`. No remote images.

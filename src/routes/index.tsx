@@ -1,9 +1,13 @@
 /**
  * File: src/routes/index.tsx
  * Purpose: BusinessCopper storefront — handcrafted solid-copper goods, rendered in
- * the editorial AIDA structure of the step52 design study (floating glass nav,
- * asymmetric hero, gapless bento, GSAP scrub + pinned consensus, review carousel,
- * certified-proof table, massive CTA).
+ * an editorial AIDA structure (floating glass nav, asymmetric hero, gapless bento,
+ * GSAP scrub + reveals, review rail, auto-rotating featured review, proof table,
+ * massive CTA).
+ *
+ * Section anchors: #top (hero), #highlights (marquee), #craft (bento),
+ * #story (scrub), #reviews (rail), #featured-review (carousel),
+ * #proof (promises), #cta (final call to action).
  */
 
 import { component$, useSignal, useVisibleTask$ } from "@builder.io/qwik";
@@ -17,7 +21,6 @@ import {
   REVIEWS,
   SPECS,
 } from "../data/site";
-import type { ReviewRating } from "../data/site";
 import { CopperPan3D } from "../components/copper-pan-3d";
 import "./site.css";
 
@@ -122,15 +125,9 @@ export default component$(() => {
 
   // Review carousel position.
   const activeReview = useSignal(0);
-  const activeQuote = ratings[activeReview.value] ?? ratings[0];
 
   // Mobile navigation dropdown.
   const menuOpen = useSignal(false);
-
-  const quoteFor = (review: ReviewRating | undefined): string => {
-    if (!review) return "No reviews yet — be the first to cook with us.";
-    return `“${review.quote}”`;
-  };
 
   // Scrubbing paragraph: plain-spoken shop story, assembled from the dataset only.
   const scrubWords =
@@ -180,7 +177,7 @@ export default component$(() => {
           stagger: 0.04,
           ease: "none",
           scrollTrigger: {
-            trigger: "#bc-scrub",
+            trigger: "#story",
             start: "top 80%",
             end: "bottom 55%",
             scrub: 0.4,
@@ -203,6 +200,41 @@ export default component$(() => {
     cleanup(() => {
       if (onLoad) window.removeEventListener("load", onLoad);
       ctx.revert();
+    });
+  });
+
+  // Featured-review auto-rotate: random verdict every 7s, paused on
+  // hover/focus, hidden tab, or prefers-reduced-motion.
+  // eslint-disable-next-line qwik/no-use-visible-task
+  useVisibleTask$(({ cleanup }) => {
+    const total = ratings.length;
+    if (total < 2) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let paused = false;
+    const section = document.getElementById("featured-review");
+    const onEnter = () => (paused = true);
+    const onLeave = () => (paused = false);
+    section?.addEventListener("mouseenter", onEnter);
+    section?.addEventListener("mouseleave", onLeave);
+    section?.addEventListener("focusin", onEnter);
+    section?.addEventListener("focusout", onLeave);
+
+    const id = window.setInterval(() => {
+      if (paused || document.hidden) return;
+      let next = activeReview.value;
+      while (next === activeReview.value) {
+        next = Math.floor(Math.random() * total);
+      }
+      activeReview.value = next;
+    }, 7000);
+
+    cleanup(() => {
+      window.clearInterval(id);
+      section?.removeEventListener("mouseenter", onEnter);
+      section?.removeEventListener("mouseleave", onLeave);
+      section?.removeEventListener("focusin", onEnter);
+      section?.removeEventListener("focusout", onLeave);
     });
   });
 
@@ -316,7 +348,7 @@ export default component$(() => {
         </nav>
       </header>
 
-      {/* Attention: asymmetric hero + marquee pinned to the bottom of the first screen */}
+      {/* Attention: hero (#top) + marquee (#highlights) pinned to first screen */}
       <div class="relative flex min-h-[100svh] flex-col">
         {/* 3D copper pan: full-bleed layer so the handle reaches the viewport edge */}
         <div
@@ -368,6 +400,7 @@ export default component$(() => {
 
         {/* Marquee ribbon anchored to the bottom of the hero screen */}
         <section
+          id="highlights"
           aria-label="Shop highlights"
           class="bc-marquee relative mt-auto w-full overflow-hidden border-y border-white/10 bg-white/[0.015] py-5"
         >
@@ -388,7 +421,7 @@ export default component$(() => {
         </section>
       </div>
 
-      {/* Interest: gapless bento grid (8+4, 6+6) */}
+      {/* Interest: gapless bento grid (#craft, 8+4, 6+6) */}
       <section
         id="craft"
         class="mx-auto max-w-6xl px-6 pt-32 pb-16 md:pt-48 md:pb-24"
@@ -607,8 +640,8 @@ export default component$(() => {
         </div>
       </section>
 
-      {/* Desire (1/3): scrubbing text reveal */}
-      <section id="bc-scrub" class="mx-auto max-w-5xl px-6 py-16 md:py-24">
+      {/* Desire (1/3): scrubbing story reveal (#story) */}
+      <section id="story" class="mx-auto max-w-5xl px-6 py-16 md:py-24">
         <noscript>
           <style>{".bc-word{opacity:1 !important}"}</style>
         </noscript>
@@ -624,7 +657,7 @@ export default component$(() => {
         </p>
       </section>
 
-      {/* Desire (2/3): summary card beside the review rail */}
+      {/* Desire (2/3): summary card beside the review rail (#reviews) */}
       <section id="reviews" class="mx-auto max-w-6xl px-6 py-32">
         <div
           id="bc-consensus-grid"
@@ -711,7 +744,7 @@ export default component$(() => {
                     {review.scores.overall}/100
                   </span>
                 </div>
-                <p class="mt-4 text-sm font-light leading-relaxed text-zinc-300">
+                <p class="mt-4 text-lg font-normal leading-relaxed text-zinc-100">
                   “{review.quote}”
                 </p>
                 <div class="mt-5 grid grid-cols-3 gap-3 border-t border-white/10 pt-4 font-mono text-[11px] text-zinc-500 sm:grid-cols-6">
@@ -730,14 +763,14 @@ export default component$(() => {
         </div>
       </section>
 
-      {/* Desire (3/3): review carousel */}
-      <section class="mx-auto max-w-6xl px-6 pb-16 md:pb-24">
+      {/* Desire (3/3): auto-rotating review carousel (#featured-review, stable height) */}
+      <section id="featured-review" class="mx-auto max-w-6xl px-6 pb-16 md:pb-24">
         <div class="bc-glass relative overflow-hidden rounded-3xl p-10 md:p-14">
           <div
             class="absolute top-1/2 left-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#d97757]/10 blur-3xl"
             aria-hidden="true"
           />
-          <div class="relative z-10">
+          <div class="relative z-10 flex flex-col">
             <div class="flex flex-wrap items-center justify-between gap-6">
               <div class="flex -space-x-3">
                 {ratings.slice(0, 8).map((review, index) => (
@@ -841,19 +874,37 @@ export default component$(() => {
                 </button>
               </div>
             </div>
-            <blockquote class="bc-font-display mt-8 text-xl font-bold leading-snug text-white md:text-3xl">
-              {quoteFor(activeQuote)}
-            </blockquote>
-            <cite class="bc-font-mono mt-6 block text-xs uppercase tracking-widest text-zinc-500">
-              {activeQuote
-                ? `${activeQuote.name} — ${activeQuote.detail}`
-                : "no review"}
-            </cite>
+            {/* Stack all verdicts in the same grid cell so the card sizes
+                to the tallest one once and never shrinks/grows on switch.
+                Inactive items stay in layout (visibility hidden) but fade out. */}
+            <div class="mt-8 grid">
+              {ratings.map((review, index) => {
+                const isActive =
+                  index ===
+                  activeReview.value % Math.max(1, ratings.length);
+                return (
+                  <figure
+                    key={review.key}
+                    aria-hidden={!isActive}
+                    class={`col-start-1 row-start-1 flex flex-col transition-opacity duration-300 ${
+                      isActive ? "visible opacity-100" : "invisible opacity-0"
+                    }`}
+                  >
+                    <blockquote class="bc-font-display text-xl font-bold leading-snug text-white md:text-3xl">
+                      “{review.quote}”
+                    </blockquote>
+                    <cite class="bc-font-mono mt-6 block text-xs uppercase tracking-widest text-zinc-500">
+                      {review.name} — {review.detail}
+                    </cite>
+                  </figure>
+                );
+              })}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Action: certified proof table */}
+      {/* Action: certified proof table (#proof) */}
       <section id="proof" class="mx-auto max-w-6xl px-6 pt-16 pb-32 md:pt-6 ">
         <div class="max-w-2xl">
           <span class="bc-font-mono text-xs uppercase tracking-widest text-[#d97757]">
@@ -905,8 +956,8 @@ export default component$(() => {
         </div>
       </section>
 
-      {/* Action: massive high-contrast CTA */}
-      <section class="mx-auto max-w-6xl px-6 pb-32">
+      {/* Action: massive high-contrast CTA (#cta, hover lift disabled) */}
+      <section id="cta" class="mx-auto max-w-6xl px-6 pb-32">
         <div class="bc-glass relative overflow-hidden rounded-3xl p-10 text-center md:p-16">
           <div
             class="absolute top-1/2 left-1/2 h-80 w-80 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#d97757]/15 blur-3xl"
